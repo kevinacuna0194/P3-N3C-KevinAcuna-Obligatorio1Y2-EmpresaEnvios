@@ -1,0 +1,91 @@
+﻿@using DTOs
+@using Enum
+@model UsuarioDTO
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<section class="seccion seccion-expandida d-flex justify-content-center align-items-center">
+    <div class="container-xl h-100">
+        <div class="row h-100 d-flex justify-content-center align-items-center">
+            <div class="col-md-6">
+                <h1 class="text-center heading mb-5">Login</h1>
+
+                @* Alertas *@  
+                @* Alerta *@
+                @if (TempData["Exito"] is not null)
+                {
+                    <div class="alert alert-success text-center text-uppercase fw-bold mb-4" role="alert">
+                        <i class="bi bi-check-circle-fill me-1"></i>
+                        @Html.Raw(TempData["Exito"])
+                    </div>
+                }
+                else if (TempData["Error"] is not null)
+                {
+                    <div class="alert alert-danger text-center text-uppercase fw-bold mb-4" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <form asp-action="IniciarSesion">
+
+                    <fieldset>
+                        <legend class="fw-bold text-primary mb-3">
+                            <i class="bi bi-box-arrow-in-right"> </i>
+                            Inicia sesión
+                        </legend>
+                        <p class="text-muted mb-3">Ingresa tus credenciales para acceder a tu cuenta.</p>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Email">Email</label>
+                            <input class="form-control" asp-for="Email" type="email" required>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" asp-for="Password">Password</label>
+                            <div class="input-group">
+                                <input asp-for="Password" type="password" class="form-control" required />
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+
+                    <div class="d-flex justify-content-between align-items-end py-3 gap-3">
+                        <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-box-arrow-in-right"></i> Enviar
+                        </button>
+                        @* <a asp-action="Crear" asp-controller="Usuario" class="btn btn-link fw-bold text-primary">  
+                            <i class="bi bi-person-plus-fill"></i> ¿Aún no tienes cuenta? Regístrate  
+                        </a> *@  
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function togglePassword(button) {
+            const input = button.previousElementSibling;
+            const icon = button.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
+}

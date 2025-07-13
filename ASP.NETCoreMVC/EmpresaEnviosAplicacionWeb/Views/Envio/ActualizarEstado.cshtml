@@ -1,0 +1,94 @@
+﻿@using Enum
+@using EmpresaEnviosAplicacionWeb.Models
+@model ActualizarEstadoVM
+
+@{
+    ViewData["Title"] = "Actualizar Estado";
+}
+
+@if (Model is null)
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion">
+        <h1 class="text-center heading mb-5">Actualizar Estado</h1>
+
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-6">
+
+                @* Alertas *@
+                @if (TempData["Exito"] is not null)
+                {
+                    <div class="alert alert-success text-center text-uppercase fw-bold mb-4 d-flex align-items-center gap-2" role="alert">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>@Html.Raw(TempData["Exito"])</span>
+                    </div>
+                }
+
+                <form asp-action="ActualizarEstado">
+                    <fieldset>
+                        <legend class="fw-bold text-primary">
+                            <i class="bi bi-arrow-repeat me-2"></i> Gestión de Estado del Envío
+                        </legend>
+                        <p class="text-muted">Modifica el estado del envío según su progreso y registra los cambios.</p>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="EstadoSeleccionado" class="control-label">Estados</label>
+                            <select class="form-select" asp-for="EstadoSeleccionado">
+                                <option value="" selected>Seleccione</option>
+                                @foreach (var estado in Model.EstadosEnvio.Where(e => e != EstadoEnvio.Todos))
+                                {
+                                    <option value="@((int)estado)">
+                                        @(estado == EstadoEnvio.EnProcesoEntrega ? "En Proceso Entrega" : estado.ToString())
+                                    </option>
+                                }
+                            </select>
+                            <span asp-validation-for="EstadoSeleccionado" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Comentario" class="control-label"></label>
+                            <textarea class="form-control mb-3" asp-for="Comentario" placeholder="Añadir comentario" rows="5"></textarea>
+                            <span asp-validation-for="Comentario" class="text-danger"></span>
+                        </div>
+                        <div class="form-group d-flex justify-content-between align-items-end py-3 gap-3">
+                            <input type="hidden" name="Id" value="@Model.Id">  <!-- ID del envío -->
+                            <input type="hidden" name="TipoEnvio" value=@Model.TipoEnvio> <!-- Tipo de envío -->
+
+                            <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-save-fill"></i> Guardar
+                            </button>
+                            <a asp-action="ListadoProcesoEntrega" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-arrow-left-circle-fill"></i> Volver
+                            </a>
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div> <!-- col-md-6 -->
+        </div> <!-- row -->
+    </section> <!-- section -->
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

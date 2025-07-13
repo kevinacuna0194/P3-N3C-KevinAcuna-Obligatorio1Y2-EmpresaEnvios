@@ -1,0 +1,307 @@
+﻿@using Enum
+@using EmpresaEnviosAplicacionWeb.Models
+@model EnviosVM
+
+@{
+    ViewData["Title"] = "Listado Envios";
+
+    @functions {
+        string ObtenerClaseEstado(EstadoEnvio estado)
+        {
+            return estado switch
+            {
+                EstadoEnvio.EnProcesoEntrega => "bg-warning text-dark rounded px-2 py-1", // Amarillo
+                EstadoEnvio.Finalizado => "bg-success text-dark rounded px-2 py-1", // Verde
+                _ => "bg-secondary text-white rounded px-2 py-1" // Por defecto, Gris
+            };
+        }
+    }
+}
+
+@if (Model == null)
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion">
+        <h1 class="text-center heading my-5">Listado Envios</h1>
+
+        @* Alerta *@
+        @if (TempData["Exito"] is not null)
+        {
+            <div class="alert alert-success text-center text-uppercase fw-bold mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-1"></i>
+                @Html.Raw(TempData["Exito"])
+            </div>
+        }
+        else if (TempData["Error"] is not null)
+        {
+            <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                @TempData["Error"]
+            </div>
+        }
+
+        <div class="row flex-column align-items-center text-center text-md-start flex-md-row">
+            <div>
+                <h3 class="fw-bold text-primary">
+                    <i class="bi bi-truck"></i> Listado de envíos
+                </h3>
+                <p class="text-muted">Consulta los envíos organizados por categoría.</p>
+            </div>
+
+            <div class="col-auto mb-3">
+                <a asp-action="CrearEnvioComun" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-plus-circle-fill"></i> Crear Envío Común
+                </a>
+            </div>
+
+            <div class="col-auto mb-3">
+                <a asp-action="CrearEnvioUrgente" class="btn btn-danger fw-bold px-4 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-lightning-fill"></i> Crear Envío Urgente
+                </a>
+            </div>
+
+            <div class="col-auto mb-3">
+                <a asp-action="ListadoProcesoEntrega" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm text-dark">
+                    <i class="bi bi-hourglass-split"></i> Envíos en Proceso
+                </a>
+            </div>
+
+
+            <div>
+                <h5 class="fw-bold text-secondary">Listado de envíos comunes</h5>
+                <p class="text-muted">Consulta todos los envíos estándar registrados hasta el momento.</p>
+            </div>
+        </div>
+
+        @if (Model.EnviosComunes.Any())
+        {
+
+
+            <div class="table-responsive shadow border rounded">
+
+                <table class="table table-sm table-hover table-striped table-bordered text-center my-4">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="fw-bold">
+                                Id
+                            </th>
+                            <th class="fw-bold">
+                                Nº Tracking
+                            </th>
+                            <th class="fw-bold">
+                                Empleado
+                            </th>
+                            <th class="fw-bold">
+                                Email Cliente
+                            </th>
+                            <th class="fw-bold">
+                                Peso
+                            </th>
+                            <th class="fw-bold">
+                                Fecha Salida
+                            </th>
+                            <th class="fw-bold">
+                                Fecha Entega
+                            </th>
+                            <th class="fw-bold">
+                                Agencia
+                            </th>
+                            <th class="fw-bold">
+                                Estado
+                            </th>
+                            <th class="fw-bold">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        @foreach (var envio in Model.EnviosComunes)
+                        {
+                            <tr>
+                                <td>
+                                    @envio.Id
+                                </td>
+                                <td>
+                                    @envio.NumeroTracking
+                                </td>
+                                <td>
+                                    @envio.NombreEmpleado
+                                </td>
+                                <td>
+                                    @envio.EmailCliente
+                                </td>
+                                <td>
+                                    @envio.Peso
+                                </td>
+                                <td>
+                                    @envio.FechaSalida.ToString("dd/MM/yyyy")
+                                </td>
+                                <td>
+                                    @(envio.FechaEntrega.HasValue ? envio.FechaEntrega.Value.ToString("dd/MM/yyyy") : "Sin asignar")
+                                </td>                                
+                                <td>
+                                    @envio.NombreAgencia
+                                </td>
+                                <td class="@ObtenerClaseEstado(envio.Estado) fw-bold">
+                                    @(envio.Estado == EstadoEnvio.EnProcesoEntrega ? "En Proceso" : envio.Estado)
+                                </td>
+                                <td class="d-flex justify-content-center">
+                                    <a asp-action="DetallesEnvioComun" asp-route-id="@envio.Id" class="btn btn-outline-info btn-sm rounded-pill shadow-sm" title="Detalles">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        } <!-- foreach -->
+                    </tbody> <!-- table-body -->
+                </table> <!--- table -->
+            </div> <!-- table-responsive -->
+
+            <div class="d-flex align-items-center justify-content-center my-3">
+                <i class="bi bi-truck text-muted me-2"></i>
+                <small class="text-muted">
+                    Total de envíos: @Model.EnviosComunes.Count()
+                </small>
+            </div>
+
+        }
+        else
+        {
+            <div class="alert alert-info text-center" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>¡Información!</strong> No hay envíos comunes registrados en este momento.
+            </div>
+
+        }
+
+        <div class="mt-4">
+            <h5 class="fw-bold text-danger">Listado de envíos urgentes</h5>
+            <p class="text-muted">Consulta los envíos prioritarios que requieren atención rápida.</p>
+        </div>        
+
+        @if (Model.EnviosUrgentes.Any())
+        {
+            <div class="table-responsive shadow border rounded">
+
+                <table class="table table-sm table-hover table-striped table-bordered text-center my-4">
+                    <thead class="bg-danger text-white">
+                        <tr>
+                            <th class="fw-bold">
+                                Id
+                            </th>
+                            <th class="fw-bold">
+                                Nº Tracking
+                            </th>
+                            <th class="fw-bold">
+                                Empleado
+                            </th>
+                            <th class="fw-bold text-truncate" style="max-width: 150px;">
+                                Email Cliente
+                            </th>
+                            <th class="fw-bold">
+                                Peso
+                            </th>
+                            <th class="fw-bold">
+                                Fecha Salida
+                            </th>
+                            <th class="fw-bold">
+                                Fecha Entrega
+                            </th>
+                            <th class="fw-bold text-truncate" style="max-width: 180px;">
+                                Dirección Postal
+                            </th>
+                            <th class="fw-bold">
+                                Entrega Eficiente
+                            </th>
+                            <th class="fw-bold">
+                                Estado
+                            </th>
+                            <th class="fw-bold">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        @foreach (var envio in Model.EnviosUrgentes)
+                        {
+                            <tr>
+                                <td>
+                                    @envio.Id
+                                </td>
+                                <td>
+                                    @envio.NumeroTracking
+                                </td>
+                                <td>
+                                    @envio.NombreEmpleado
+                                </td>
+                                <td class="text-truncate" style="max-width: 150px;">
+                                    @envio.EmailCliente
+                                </td>
+                                <td>
+                                    @envio.Peso
+                                </td>
+                                <td>
+                                    @envio.FechaSalida.ToString("dd/MM/yyyy")
+                                </td>
+                                <td>
+                                    @(envio.FechaEntrega.HasValue ? envio.FechaEntrega.Value.ToString("dd/MM/yyyy") : "Sin asignar")
+                                </td>
+                                <td class="text-truncate" style="max-width: 180px;">
+                                    @envio.DireccionPostal
+                                </td>
+                                <td>
+                                    @(envio.EntregaEficiente.HasValue && envio.EntregaEficiente.Value ? "Sí" : "No")
+                                </td>
+                                <td class="@ObtenerClaseEstado(envio.Estado) fw-bold">
+                                    @(envio.Estado == EstadoEnvio.EnProcesoEntrega ? "En Proceso" : envio.Estado)
+                                </td>
+                                <td class="d-flex justify-content-center">
+                                    <a asp-action="DetallesEnvioUrgente" asp-route-id="@envio.Id" class="btn btn-outline-danger btn-sm rounded-pill shadow-sm" title="Detalles">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        } <!-- foreach -->
+                    </tbody> <!-- table-body -->
+                </table> <!--- table -->
+            </div> <!-- table-responsive -->
+
+            <div class="d-flex align-items-center justify-content-center mt-3">
+                <i class="bi bi-truck text-muted me-2"></i>
+                <small class="text-muted">
+                    Total de envíos: @Model.EnviosUrgentes.Count()
+                </small>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-center my-1">
+                <i class="bi bi-truck text-success me-2"></i>
+                <small class="fw-bold text-success">
+                    Total de envíos registrados: @(Model.EnviosComunes.Count() + @Model.EnviosUrgentes.Count())
+                </small>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center" role="alert">
+                <i class="bi bi-info-circle"></i>
+                <strong>¡Atención!</strong> No hay envíos urgentes registrados en este momento.
+            </div>
+        }
+
+    </section> <!-- section -->
+}

@@ -1,0 +1,90 @@
+﻿@using DTOs
+@model UsuarioDTO
+
+@{
+    ViewData["Title"] = "Detalles Usuario";
+}
+
+@if (Model is null)
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion">
+        <h1 class="text-center heading mb-5">Detalles Usuario</h1>
+
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-6">
+
+                <div class="card shadow border">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="card-title">
+                            <i class="bi bi-person-vcard"></i> 
+                            Información de <strong>@Model.Nombre</strong>
+                        </h4>
+                        <p class="card-subtitle text-light">Aquí puedes ver la información detallada del usuario seleccionado.</p>
+                    </div> @* card-header *@
+
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush px-3">
+                            <li class="list-group-item">
+                                <strong>@Html.DisplayNameFor(model => model.Id):</strong> @Html.DisplayFor(model => model.Id)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>@Html.DisplayNameFor(model => model.Nombre):</strong> @Html.DisplayFor(model => model.Nombre)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>@Html.DisplayNameFor(model => model.Email):</strong> @Html.Raw(Model.Email)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Contraseña: </strong> @Html.DisplayFor(model => model.Password)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Fecha de Registro: </strong> @Model.FechaRegistro.ToString("dd/MM/yyyy")
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Fecha de Nacimiento: </strong> @Model.FechaNacimiento.ToString("dd/MM/yyyy")
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Teléfono: </strong> @Html.DisplayFor(model => model.Telefono)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Dirección: </strong> @Html.DisplayFor(model => model.Direccion)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Documento de Identidad: </strong> @Html.DisplayFor(model => model.DocumentoIdentidad)
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Rol: </strong> @Html.DisplayFor(model => model.NombreRol)
+                            </li>
+                        </ul>
+                    </div> @* card-body *@
+                    <div class="card-footer">
+                        <div class="form-group d-flex justify-content-between align-items-end py-3">
+                            <a asp-action="Editar" asp-route-id="@Model.Id" class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm text-dark">
+                                <i class="bi bi-pencil-fill"></i> Editar
+                            </a>
+                            <a asp-action="Listado" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-arrow-left"></i> Volver</a>
+                        </div>
+                    </div> <!-- card-footer -->
+                </div> <!-- card -->
+            </div> <!-- col-md-6 -->
+        </div> <!-- row -->
+    </section> <!-- section -->
+}

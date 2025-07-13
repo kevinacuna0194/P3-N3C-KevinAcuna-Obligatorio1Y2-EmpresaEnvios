@@ -1,0 +1,53 @@
+﻿@using EmpresaEnviosAplicacionWeb.Models
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Error";
+    var errorTitulo = Model.Codigo switch
+    {
+        400 => "Solicitud Incorrecta",
+        401 => "No Autorizado",
+        403 => "Acceso Prohibido",
+        404 => "No Encontrado",
+        409 => "Conflicto Detectado",
+        500 => "Error Interno del Servidor",
+        _ => "Error del Servidor"
+    };
+    var imagenUrl = $"/img/error_{Model.Codigo}.svg";
+}
+<seccion class="seccion seccion-expandida">
+    <div class="d-flex justify-content-center align-items-center min-vh-75 bg-light py-5">
+        <div class="card shadow-lg border-0 text-center" style="max-width: 700px; width: 100%;">
+            <div class="card-body p-5">
+                <img src="@imagenUrl" alt="Error ilustrado" class="img-fluid mb-4" style="max-height: 180px;" onerror="this.onerror=null;this.src='/images/error_default.svg';" />
+
+                <h1 class="text-danger display-6 mb-2">Error @Model.Codigo - @errorTitulo</h1>
+                <p class="lead">@Model.Mensaje</p>
+
+                @if (!string.IsNullOrEmpty(Model.Sugerencia))
+                {
+                    <div class="alert alert-warning mt-3">
+                        <strong>Sugerencia:</strong> @Model.Sugerencia
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.Detalles))
+                {
+                    <details class="mt-3 text-start">
+                        <summary class="fw-bold">Detalles técnicos</summary>
+                        <pre class="bg-light p-3 rounded border">@Model.Detalles</pre>
+                    </details>
+                }
+
+                @if (Model.ShowRequestId)
+                {
+                    <p class="mt-3 text-muted">
+                        <strong>ID de solicitud:</strong> <code>@Model.RequestId</code>
+                    </p>
+                }
+
+                <a href="javascript:history.back()" class="btn btn-outline-danger mt-3">Volver</a>
+            </div>
+        </div>
+    </div>
+</seccion>

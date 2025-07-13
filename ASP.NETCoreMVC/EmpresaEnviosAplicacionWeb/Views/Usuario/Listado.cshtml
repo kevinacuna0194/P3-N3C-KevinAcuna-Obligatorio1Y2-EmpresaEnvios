@@ -1,0 +1,153 @@
+﻿@using DTOs
+@model IEnumerable<UsuarioDTO>
+
+@{
+    ViewData["Title"] = "Listado Usuarios";
+}
+
+@if (Model == null || !Model.Any())
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion">
+        <h1 class="text-center heading my-5">Listado Usuarios</h1>
+
+        @* Alerta *@
+        @if (TempData["Exito"] is not null)
+        {
+            <div class="alert alert-success text-center text-uppercase fw-bold mb-5" role="alert">
+                <i class="bi bi-check-circle-fill"></i> 
+                @Html.Raw(TempData["Exito"])
+            </div>
+
+        }
+        else if (TempData["Error"] is not null)
+        {
+            <div class="alert alert-danger text-center text-uppercase fw-bold mb-5" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                @TempData["Error"]
+            </div>
+        }
+
+        <h3 class="fw-bold text-primary">
+            <i class="bi bi-people"></i> Lista de usuarios
+        </h3>
+        <p class="text-muted">Aquí puedes ver y gestionar los usuarios registrados.</p>
+
+
+        <div class="mb-3">
+            <a asp-action="Crear" class="btn btn-success fw-bold px-4 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-person-plus-fill"></i> Crear Usuario
+            </a>
+        </div>
+
+
+        <div class="table-responsive shadow border rounded">
+
+            <table class="table table-sm table-hover table-striped table-bordered text-center my-4">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th class="fw-bold">
+                            @Html.DisplayNameFor(model => model.Id)
+                        </th>
+                        <th class="fw-bold">
+                            @Html.DisplayNameFor(model => model.Nombre)
+                        </th>
+                        <th class="fw-bold text-truncate" style="max-width: 150px;">
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th class="fw-bold">
+                            @Html.DisplayNameFor(model => model.FechaRegistro)
+                        </th>
+                        <th class="fw-bold">
+                            @Html.DisplayNameFor(model => model.FechaNacimiento)
+                        </th>
+                        <th class="fw-bold">
+                            Teléfono
+                        </th>
+                        <th class="fw-bold text-truncate" style="max-width: 180px;">
+                            @Html.DisplayNameFor(model => model.Direccion)
+                        </th>
+                        <th class="fw-bold">
+                            CI
+                        </th>
+                        <th class="fw-bold">
+                            Rol
+                        </th>
+                        <th class="fw-bold">
+                            Acciones
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="align-middle text-center">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Id)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nombre)
+                            </td>
+                            <td class="text-truncate" style="max-width: 150px;">
+                                @Html.Raw(item.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FechaRegistro)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FechaNacimiento)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Telefono)
+                            </td>
+                            <td class="text-truncate" style="max-width: 180px;">
+                                @Html.DisplayFor(modelItem => item.Direccion)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DocumentoIdentidad)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.NombreRol)
+                            </td>
+                            <td class="d-flex justify-content-center gap-2">
+                                <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm rounded-pill shadow-sm" title="Editar">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <a asp-action="Detalles" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm rounded-pill shadow-sm" title="Detalles">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a asp-action="Eliminar" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm rounded-pill shadow-sm" title="Eliminar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table> <!--- table -->
+        </div> <!-- table-responsive -->
+
+        <div class="d-flex align-items-center justify-content-center mt-3">
+            <i class="bi bi-people-fill text-success me-2"></i>
+            <small class="fw-bold text-success">
+                Total de usuarios registrados: @Model.Count()
+            </small>
+        </div>
+
+    </section> <!-- section -->
+}

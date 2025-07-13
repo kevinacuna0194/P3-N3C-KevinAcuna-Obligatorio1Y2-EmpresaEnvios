@@ -1,0 +1,22 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Ha ocurrido un problema";
+    var mensaje = string.IsNullOrEmpty(Model) ? "Se produjo un error inesperado. Intente nuevamente." : Model;
+    var imagenUrl = "/img/error_default.svg";
+}
+
+<section class="seccion seccion-expandida">
+    <div class="d-flex justify-content-center align-items-center min-vh-75 bg-light py-5">
+        <div class="card shadow-lg border-0 text-center" style="max-width: 700px; width: 100%;">
+            <div class="card-body p-5">
+                <img src="@imagenUrl" alt="Error" class="img-fluid mb-4" style="max-height: 180px;" />
+
+                <h1 class="text-danger display-6 mb-2">Algo salió mal</h1>
+                <p class="lead">@mensaje</p>
+
+                <a href="javascript:history.back()" class="btn btn-outline-danger mt-3">Volver</a>
+            </div>
+        </div>
+    </div>
+</section>

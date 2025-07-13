@@ -1,0 +1,130 @@
+﻿@using EmpresaEnviosAplicacionWeb.Models;
+@model CambiarContraseñaVM
+
+@{
+    ViewData["Title"] = "CambiarContraseña";
+
+    var rol = Context.Session.GetString("Rol");
+    var token = Context.Session.GetString("Token");
+    bool usuarioLogueado = !string.IsNullOrEmpty(token);
+}
+
+@if (Model is null)
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion seccion-expandida">
+        <h1 class="text-center heading mb-5">Cambiar Contraseña</h1>
+
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-6">
+
+                @* Alertas *@
+                @if (TempData["Error"] is not null)
+                {
+                    <div class="alert alert-danger text-center text-uppercase fw-bold mb-5" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <form asp-action="CambiarContraseña">
+                    <fieldset>
+                        <legend class="fw-bold text-primary">
+                            <i class="bi bi-shield-lock"></i> Cambiar Contraseña
+                        </legend>
+                        <p class="text-muted">Ingresa tu contraseña actual y define una nueva para proteger tu cuenta.</p>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ActualPassword" class="control-label">Contraseña Actual</label>
+                            <div class="input-group">
+                                <input asp-for="ActualPassword" class="form-control" type="password" required />
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ActualPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="NuevaPassword" class="control-label">Nueva Contraseña</label>
+                            <div class="input-group">
+                                <input asp-for="NuevaPassword" class="form-control" type="password" required />
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="NuevaPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="ConfirmarPassword" class="control-label">Confirmar Contraseña</label>
+                            <div class="input-group">
+                                <input asp-for="ConfirmarPassword" class="form-control" type="password" required />
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="ConfirmarPassword" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group d-flex justify-content-between align-items-end py-3 gap-3">
+                        <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                            <i class="bi bi-shield-lock-fill"></i> Guardar
+                        </button>
+                        @if (usuarioLogueado && rol == "Administrador" || usuarioLogueado && rol == "Funcionario")
+                        {
+                            <a asp-action="Listado" asp-controller="Envio" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-arrow-left-circle-fill"></i> Volver
+                            </a>
+                        }
+                        else if (usuarioLogueado && rol == "Cliente")
+                        {
+                            <a asp-action="ListadoCliente" asp-controller="Envio" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-arrow-left-circle-fill"></i> Volver
+                            </a>
+                        }
+                    </div>
+                </form>
+            </div> <!-- col-md-6 -->
+        </div> <!-- row -->
+    </section> <!-- section -->
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function togglePassword(button) {
+            const input = button.previousElementSibling;
+            const icon = button.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
+}

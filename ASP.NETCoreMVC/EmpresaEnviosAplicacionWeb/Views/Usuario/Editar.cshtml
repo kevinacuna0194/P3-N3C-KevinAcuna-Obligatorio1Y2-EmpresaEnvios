@@ -1,0 +1,149 @@
+﻿@using EmpresaEnviosAplicacionWeb.Models
+@model UsuarioVM
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+@if (Model is null)
+{
+    if (TempData["Error"] is not null)
+    {
+        <div class="alert alert-danger text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            @TempData["Error"]
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center text-uppercase fw-bold mt-5" role="alert">
+            <i class="bi bi-exclamation-circle-fill me-1"></i>
+            No se encontraron registros
+        </div>
+    }
+}
+else
+{
+    <section class="seccion">
+        <h1 class="text-center heading mb-5">Editar</h1>
+
+        <div class="row d-flex justify-content-center">
+
+            <div class="col-md-6">
+
+                @if (TempData["Error"] is not null)
+                {
+                    <div class="alert alert-danger text-center text-uppercase fw-bold mb-5" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-1"></i>
+                        @TempData["Error"]
+                    </div>
+                }
+
+                <form asp-action="Editar">
+                    <fieldset>
+                        <legend class="fw-bold text-primary mb-3">
+                            <i class="bi bi-pencil-square"> </i>
+                            Editar información
+                        </legend>
+                        <p class="text-muted mb-3">Modifica los datos y guarda los cambios.</p>
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Id" class="control-label"></label>
+                            <input asp-for="UsuarioDTO.Id" class="form-control" readonly />
+                            <span asp-validation-for="UsuarioDTO.Id" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.FechaRegistro" class="control-label">Fecha de Registro</label>
+                            <input asp-for="UsuarioDTO.FechaRegistro" type="date" class="form-control" readonly />
+                            <span asp-validation-for="UsuarioDTO.FechaRegistro" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Nombre" class="control-label"></label>
+                            <input asp-for="UsuarioDTO.Nombre" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.Nombre" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Email" class="control-label"></label>
+                            <input asp-for="UsuarioDTO.Email" type="email" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Password" class="control-label">Contraseña</label>
+                            <div class="input-group">
+                                <input asp-for="UsuarioDTO.Password" class="form-control" type="password" required />
+                                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="UsuarioDTO.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.FechaNacimiento" class="control-label">Fecha de Nacimiento</label>
+                            <input asp-for="UsuarioDTO.FechaNacimiento" type="date" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.FechaNacimiento" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Telefono" class="control-label">Teléfono</label>
+                            <input asp-for="UsuarioDTO.Telefono" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.Telefono" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.Direccion" class="control-label">Dirección</label>
+                            <input asp-for="UsuarioDTO.Direccion" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.Direccion" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.DocumentoIdentidad" class="control-label">Documento de Identidad</label>
+                            <input asp-for="UsuarioDTO.DocumentoIdentidad" class="form-control" />
+                            <span asp-validation-for="UsuarioDTO.DocumentoIdentidad" class="text-danger"></span>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="UsuarioDTO.RolId" class="control-label">Rol</label>
+                            <select asp-for="UsuarioDTO.RolId" class="form-select">
+                                <option value="" selected>Seleccione</option>
+                                @if (Context.Session.GetString("Rol") == "Administrador")
+                                {   
+                                    @foreach (var rol in Model.Roles)
+                                    {
+                                        <option value="@rol.Id">@rol.Nombre</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="UsuarioDTO.RolId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group d-flex justify-content-between align-items-end py-3">
+                            <button type="submit" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-save-fill"></i> Guardar
+                            </button>
+                            <a asp-action="Listado" class="btn btn-outline-secondary fw-bold px-4 py-2 rounded-pill shadow-sm">
+                                <i class="bi bi-arrow-left-circle-fill"></i> Volver
+                            </a>
+                        </div>
+
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </section>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function togglePassword(button) {
+            const input = button.previousElementSibling;
+            const icon = button.querySelector("i");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
+        }
+    </script>
+}
